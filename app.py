@@ -1,34 +1,35 @@
 #!/usr/bin/python3
 '''
 App para enviar emails desde cuentas G
+Utilizando argparse
 '''
-import sys
+import argparse
 from email.message import EmailMessage
 import ssl
 import smtplib
 
 if __name__ == "__main__":
 
-    if len(sys.argv) == 4:
-        
-        em = EmailMessage()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("para", help="Correo electrónico destinatario")
+    parser.add_argument("asunto", help="Asunto del correo")
+    parser.add_argument("cuerpo", help="Cuerpo del correo")
+    args = parser.parse_args()
 
-        email   = "example@mail.com"            # Correo electronico del remitente
-        pss     = "secret_password_of_email"    # Contraseña del correo remitente
-        rece    = sys.argv[1]                   # Correo electronico que recibe   
-        subj    = sys.argv[2]                   # Asunto del correo
-        body    = sys.argv[3]                   # Cuerpo del mensaje
+    em = EmailMessage()
+    email   = "correoejemplo@mail.com"      # Correo electronico del remitente
+    pss     = "contrasenasecreta"           # Contraseña del correo remitente
+    rece    = args.para                     # Correo electronico que recibe   
+    subj    = args.asunto                   # Asunto del correo
+    body    = args.cuerpo                   # Cuerpo del mensaje
 
-        em['From']      = email
-        em['To']        = rece
-        em['subject']   = subj
-        em.set_content(body)
+    em['From']      = email
+    em['To']        = rece
+    em['subject']   = subj
+    em.set_content(body)
 
-        context = ssl.create_default_context()
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as smtp:
-            smtp.login(email, pss)
-            smtp.sendmail(email, rece, em.as_string())
-            print("Correo enviado! a ", rece)
-    else:
-        print("Error")
-        print("Uso: python3 app.py [mail_para] [asunto] [mensaje]")
+    context = ssl.create_default_context()
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as smtp:
+        smtp.login(email, pss)
+        smtp.sendmail(email, rece, em.as_string())
+        print("Correo enviado a ", rece)
